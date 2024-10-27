@@ -32,7 +32,7 @@ def train_one_epoch(optimizer,
 
         for seq in y:
             length = (seq != 38).sum()
-            y_true.exten(seq[:length].tolist())
+            y_true.extend(seq[:length].tolist())
             target_lengths.append(length)
 
         target_lengths = torch.tensor(target_lengths, dtype=torch.long).to(device)
@@ -85,7 +85,7 @@ def valid_one_epoch(valid_loader,
 
         for seq in y:
             length = (seq != 38).sum()
-            y_true.exten(seq[:length].tolist())
+            y_true.extend(seq[:length].tolist())
             target_lengths.append(length)
 
         target_lengths = torch.tensor(target_lengths, dtype=torch.long).to(device)
