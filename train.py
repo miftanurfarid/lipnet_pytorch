@@ -25,7 +25,7 @@ def train_one_epoch(optimizer,
         y = y.to(device)
         
         pred = model(frame)
-        print(pred.shape)
+
         probs = pred.permute(1,0,2) # (B, T, C) -> (T, B, C)
 
         target_lengths = []
@@ -51,7 +51,7 @@ def train_one_epoch(optimizer,
 
         word = [ ]
         words= [ ]
-        print(y.shape[0])
+
         for i in range(y.shape[0]):
             for n in range(75):
                 max = torch.argmax(pred[i][n][:])
@@ -99,7 +99,7 @@ def valid_one_epoch(valid_loader,
         total_loss += loss.item()
 
     total_loss /= len(valid_loader)
-    return total_loss.detach().cpu().numpy()
+    return total_loss.cpu().numpy()
 
 
 def train_lipnet(opts):
