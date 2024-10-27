@@ -66,12 +66,14 @@ def train_one_epoch(optimizer,
     print("Original Sentence:", itos(y[0]) )
     
     total_loss /= len(train_loader)
-    return total_loss.detach().cpu().numpy(), words[0]
+    print(total_loss)
+    return total_loss, words[0]
 
 def valid_one_epoch(valid_loader,
                     ctc_loss,
                     device,
                     model):
+    total_loss = 0
     for frame, align in tqdm(valid_loader):
         frame = frame.type(torch.FloatTensor)
         frame = frame.to(device)
@@ -99,7 +101,8 @@ def valid_one_epoch(valid_loader,
         total_loss += loss.item()
 
     total_loss /= len(valid_loader)
-    return total_loss.cpu().numpy()
+    print(total_loss)
+    return total_loss
 
 
 def train_lipnet(opts):
