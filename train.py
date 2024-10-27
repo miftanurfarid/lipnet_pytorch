@@ -66,7 +66,6 @@ def train_one_epoch(optimizer,
     print("Original Sentence:", itos(y[0]) )
     
     total_loss /= len(train_loader)
-    print(total_loss)
     return total_loss, words[0]
 
 def valid_one_epoch(valid_loader,
@@ -101,7 +100,6 @@ def valid_one_epoch(valid_loader,
         total_loss += loss.item()
 
     total_loss /= len(valid_loader)
-    print(total_loss)
     return total_loss
 
 
@@ -122,11 +120,11 @@ def train_lipnet(opts):
     criterion = nn.CTCLoss(blank=39)
 
     if model == 'conv3dlstm':
-        model = Conv3DLSTMModel(vocab_size, hidden_size)
+        model = Conv3DLSTMModel(vocab_size, hidden_size).to(device)
     elif model == 'conv3dlstmmini':
-        model = Conv3DLSTMModelMini(vocab_size, hidden_size)
+        model = Conv3DLSTMModelMini(vocab_size, hidden_size).to(device)
     else:
-        model = LipNet(vocab_size, hidden_size)
+        model = LipNet(vocab_size, hidden_size).to(device)
     
     optimizer = optim.Adam(model.parameters(), lr)
 
