@@ -25,6 +25,7 @@ def train_one_epoch(optimizer,
         y = y.to(device)
         
         pred = model(frame)
+        print(pred.shape)
         probs = pred.permute(1,0,2) # (B, T, C) -> (T, B, C)
 
         target_lengths = []
@@ -50,10 +51,10 @@ def train_one_epoch(optimizer,
 
         word = [ ]
         words= [ ]
-
+        print(y.shape[0])
         for i in range(y.shape[0]):
             for n in range(75):
-                max = torch.argmax(pred[n][i])
+                max = torch.argmax(pred[i][n][:])
                 word.append(max.cpu().detach().numpy())
             words.append(word)
             word = []
