@@ -10,6 +10,7 @@ from utils import itos
 from model import Conv3DLSTMModel, Conv3DLSTMModelMini, LipNet
 from tqdm import tqdm
 import glob
+from pathlib import Path
 
 def train_one_epoch(optimizer,
                     train_loader,
@@ -112,6 +113,10 @@ def train_lipnet(opts):
     num_workers = opts.workers
     vocab_size = 40 
     device = opts.device
+    MODEL_PATH = Path('models')
+    MODEL_PATH.mkdir(parents=True, exist_ok=True)
+    MODEL_NAME = model +".pth"
+    MODEL_SAVE_PATH = MODEL_PATH/MODEL_NAME
 
     dataset_path = os.getcwd() + "/data/alignments/s1/*.align"
     files = glob.glob(dataset_path)
@@ -124,6 +129,10 @@ def train_lipnet(opts):
         model = Conv3DLSTMModelMini(vocab_size, hidden_size).to(device)
     else:
         model = LipNet(vocab_size, hidden_size).to(device)
+
+    if os.path.isfile(MODEL_SAVE_PATH):
+        print("Loading model..")
+        model.load_state_dict(torch.load(f=MODEL_SAVE_PATH)) 
     
     optimizer = optim.Adam(model.parameters(), lr)
 
@@ -153,9 +162,17 @@ def train_lipnet(opts):
         print(f"Train Loss: {train_loss} Valid Loss: {valid_loss}")
         
         if ((epoch + 1) > ((epoch // 100) * 100 + 60)) and ((epoch + 1) <= ((epoch // 100) + 1) * 100):
-            optimizer.param_groups[0]["lr"] *= np.exp(-0.1)
+            #optimizer.param_groups[0]["lr"] *= np.exp(-0.1)
+            optimizer.param_groups[0]["lr"] *= 0.9
         else:
-            optimizer.param_groups[0]["lr"] = lr
+            #optimizer.param_groups[0]["lr"] = lr
+            optimizer.param_groups[0]["lr"] *= 0.9
+
+        if os.path.isfile(MODEL_SAVE_PATH):
+            os.remove(MODEL_SAVE_PATH)
+        
+        print("Saving model..")
+        torch.save(obj=model.state_dict(), f=MODEL_SAVE_PATH)
 
         summary_loss["train_loss"].append(train_loss)
         summary_loss["valid_loss"].append(valid_loss)
