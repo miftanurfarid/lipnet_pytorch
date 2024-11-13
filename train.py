@@ -111,8 +111,7 @@ def train_lipnet(opts):
     batch_size = opts.batch
     num_workers = opts.workers
     vocab_size = 40 
-    
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = opts.device
 
     dataset_path = os.getcwd() + "/data/alignments/s1/*.align"
     files = glob.glob(dataset_path)

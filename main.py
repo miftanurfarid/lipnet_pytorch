@@ -14,6 +14,7 @@ def get_parser():
     parser.add_argument('--model', dest='model', type=str, default='lipnet-lstm', help='Model file.')
     parser.add_argument('--batch', dest='batch', type=int, default=8, help='Batch size for training.')
     parser.add_argument('--workers', dest='workers', type=int, default=4, help='Number of workers for data loading.')
+    parser.add_argument('--device', dest='device', type=str, default='cuda', help='Computing device')
     
     return parser
 
