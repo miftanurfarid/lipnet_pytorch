@@ -42,7 +42,7 @@ if __name__ == '__main__':
     print("Training...")
     print("~"*200)
     summary = train_lipnet(opts=opts)
-    summary["opts" : opts]
+    #summary["opts" : opts]
     print("~"*200)
     print("Finished training")
     save_json(summary, "summary.json")
