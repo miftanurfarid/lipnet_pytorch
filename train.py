@@ -108,7 +108,7 @@ def train_lipnet(opts):
     EPOCHS = opts.epoch
     lr = opts.lr
     hidden_size = opts.hidden_size
-    model_name = opts.model
+    model_name = opts.model_name
     batch_size = opts.batch
     num_workers = opts.workers
     device = opts.device
