@@ -11,7 +11,7 @@ def get_parser():
     parser.add_argument('--epoch', dest='epoch', type=int, default=300, help='Number of epochs for training.')
     parser.add_argument('--lr', dest='lr', type=float, default=0.001, help='Learning rate.')
     parser.add_argument('--hidden_size', dest='hidden_size', type=int, default=256, help='Size of hidden layers.')
-    parser.add_argument('--model', dest='model', type=str, default='lipnet-lstm', help='Model file.')
+    parser.add_argument('--model', dest='model_name', type=str, default='lipnet-lstm', help='Model file.')
     parser.add_argument('--batch', dest='batch', type=int, default=8, help='Batch size for training.')
     parser.add_argument('--workers', dest='workers', type=int, default=4, help='Number of workers for data loading.')
     parser.add_argument('--device', dest='device', type=str, default='cuda', help='Computing device')
