@@ -1,5 +1,6 @@
 data
-data.zip
+*.zip
 __pycache__
 coba.ipynb
+.venv
 models
