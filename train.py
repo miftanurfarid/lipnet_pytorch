@@ -111,29 +111,30 @@ def train_lipnet(opts):
     model = opts.model
     batch_size = opts.batch
     num_workers = opts.workers
-    vocab_size = 40 
     device = opts.device
-    MODEL_PATH = Path('models')
-    MODEL_PATH.mkdir(parents=True, exist_ok=True)
-    MODEL_NAME = model +".pth"
-    MODEL_SAVE_PATH = MODEL_PATH/MODEL_NAME
+    vocab_size = 40 
 
     dataset_path = os.getcwd() + "/data/alignments/s1/*.align"
     files = glob.glob(dataset_path)
 
     criterion = nn.CTCLoss(blank=39)
 
-    if model == 'conv3dlstm':
+    if model_name == 'conv3dlstm':
         model = Conv3DLSTMModel(vocab_size, hidden_size).to(device)
-    elif model == 'conv3dlstmmini':
+    elif model_name == 'conv3dlstmmini':
         model = Conv3DLSTMModelMini(vocab_size, hidden_size).to(device)
     else:
         model = LipNet(vocab_size, hidden_size).to(device)
 
-    if os.path.isfile(MODEL_SAVE_PATH):
+    MODEL_PATH = Path('models')
+
+    if not os.path.isdir(MODEL_PATH):
+        MODEL_PATH.mkdir(parents=True, exist_ok=True)
+    elif len(os.listdir(MODEL_PATH)) > 0:
+        MODEL_LOAD_PATH = MODEL_PATH / os.listdir(MODEL_PATH)[-1]
         print("Loading model..")
-        model.load_state_dict(torch.load(f=MODEL_SAVE_PATH)) 
-    
+        model.load_state_dict(torch.load(f=MODEL_LOAD_PATH))
+
     optimizer = optim.Adam(model.parameters(), lr)
 
     train_data = CustomDataset(files[:900])
@@ -162,17 +163,14 @@ def train_lipnet(opts):
         print(f"Train Loss: {train_loss} Valid Loss: {valid_loss}")
         
         if ((epoch + 1) > ((epoch // 100) * 100 + 60)) and ((epoch + 1) <= ((epoch // 100) + 1) * 100):
-            #optimizer.param_groups[0]["lr"] *= np.exp(-0.1)
-            optimizer.param_groups[0]["lr"] *= 0.9
+            optimizer.param_groups[0]["lr"] *= np.exp(-0.1)
         else:
-            #optimizer.param_groups[0]["lr"] = lr
-            optimizer.param_groups[0]["lr"] *= 0.9
+            optimizer.param_groups[0]["lr"] = lr
 
-        if os.path.isfile(MODEL_SAVE_PATH):
-            os.remove(MODEL_SAVE_PATH)
-        
-        print("Saving model..")
-        torch.save(obj=model.state_dict(), f=MODEL_SAVE_PATH)
+        if epoch % 20 == 0:
+            print("Saving model..")
+            MODEL_SAVE_PATH = MODEL_PATH/ (model_name + (f"-{epoch:>03d}.pth"))
+            torch.save(obj=model.state_dict(), f=MODEL_SAVE_PATH)
 
         summary_loss["train_loss"].append(train_loss)
         summary_loss["valid_loss"].append(valid_loss)
